@@ -120,3 +120,26 @@ def test_invalid_password_for_user_creation(password, user_base_data):
     user_base_data["password"] = password
     with pytest.raises(ValidationError):
         UserCreate(**user_base_data)
+
+@pytest.mark.parametrize("profile_url", [
+    "https://example.com/profiles/image.jpg",
+    "https://example.com/profiles/image.jpeg",
+    "https://example.com/profiles/image.png",
+    "https://example.com/profiles/image.jpg?size=large",
+    None
+])
+def test_valid_profile_picture_urls(profile_url, user_create_data):
+    user_create_data["profile_picture_url"] = profile_url
+    user = UserBase(**user_create_data)
+    assert user.profile_picture_url == profile_url
+
+@pytest.mark.parametrize("profile_url", [
+    "https://example.com/profiles/image.gif",
+    "https://example.com/profiles/image.pdf",
+    "https://example.com/profiles/image",
+    "https://example.com/profiles/image.jpg.exe"
+])
+def test_invalid_profile_picture_urls(profile_url, user_create_data):
+    user_create_data["profile_picture_url"] = profile_url
+    with pytest.raises(ValidationError, match="Must point to a valid image file"):
+        UserBase(**user_create_data)
