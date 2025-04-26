@@ -1,0 +1,3 @@
+# CVE-2024-56406: Perl heap buffer overflow
+# IGNORED REASON: Application doesn't use the affected perl features
+CVE-2024-56406
