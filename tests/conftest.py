@@ -238,3 +238,24 @@ def email_service():
         mock_service.send_verification_email.return_value = None
         mock_service.send_user_email.return_value = None
         return mock_service
+    
+@pytest.mark.asyncio
+async def test_current_user_error(db_session, verified_user):
+     """Test that a user is correctly created and stored in the database."""
+     result = await db_session.execute(select(User).filter_by(email=verified_user.email))
+     stored_user = result.scalars().first()
+     assert stored_user is not None
+     assert stored_user.email == verified_user.email
+     assert verify_password("MySuperPassword$1234", stored_user.hashed_password)
+
+@pytest.mark.asyncio
+async def test_bulk_user_creation_performance(db_session, users_with_same_role_50_users):
+ async with db_session.begin():
+         for user in users_with_same_role_50_users:
+             db_session.add(user)
+         await db_session.flush()
+ 
+ async with db_session.begin():
+         result = await db_session.execute(select(User).filter_by(role=UserRole.AUTHENTICATED))
+         users = result.scalars().all()
+         assert len(users) == 50
