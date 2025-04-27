@@ -44,6 +44,7 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     email: EmailStr = Field(..., example="john.doe@example.com")
     password: str = Field(..., example="Secure*1234",min_length=8)
+    role: UserRole = Field(default=UserRole.AUTHENTICATED, example="AUTHENTICATED")
     @validator('password')
     def validate_password(cls, v):
         if len(v) < 8:
