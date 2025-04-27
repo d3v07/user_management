@@ -19,20 +19,6 @@ minio_client = Minio(
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 
-# Ensure bucket exists
-def ensure_bucket_exists():
-    """Ensure the bucket exists, creating it if necessary"""
-    try:
-        if not minio_client.bucket_exists(settings.MINIO_BUCKET_NAME):
-            minio_client.make_bucket(settings.MINIO_BUCKET_NAME)
-            print(f"Bucket '{settings.MINIO_BUCKET_NAME}' created successfully")
-        return True
-    except S3Error as e:
-        print(f"Error checking/creating bucket: {e}")
-        return False
-
-# Ensure bucket exists on module load
-ensure_bucket_exists()
 
 async def upload(file: UploadFile, user_id: UUID) -> str:
     try:
@@ -71,6 +57,7 @@ def allowed_file(file: UploadFile):
 def resize_image(image, size, user_id):
     with Image.open(image) as img:
         resized_img = img.resize(size)
+        # Get extension more safely
         ext = image.split('.')[-1]
         output_path = f"/tmp/{str(user_id)}.{ext}"
         resized_img.save(output_path)
