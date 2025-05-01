@@ -118,7 +118,7 @@ ________________________________________
 - By implementing these test cases, we can ensure a robust and user-friendly profile picture upload feature, while maintaining the security and reliability of the MinIO storage backend. 
 
 ________________________________________
-Deployment:
+## Deployment:
 
 •	Successfully deployed the project to DockerHub :	[DockerHub Repository](https://hub.docker.com/repository/docker/devt444/user_management/general)
 
